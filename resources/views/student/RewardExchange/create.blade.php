@@ -64,9 +64,11 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="points_required" class="col-sm-4 control-label">Points Needed to Exchange</label>
-                        <div class="col-sm-12">
-                            <input type="text" class="form-control" id="points_required" name="points_required" value="" disabled>
+                        <label for="points_required" class="col-sm-12 control-label">Points Needed to Exchange</label>
+                        <div class="col-sm-12">points_remaining
+                            <input type="text" class="form-control" id="reward_point" name="reward_point" value="" hidden>
+                            <input type="text" class="form-control" id="points_required" name="points_required" value="" readonly>
+                            <input type="text" class="form-control" id="points_remaining" name="points_remaining" value="" hidden>
                         </div>
                     </div>       
                     
@@ -129,16 +131,25 @@
             $('#description').val(description);
             $('#avail_qty').val(avail_qty);
             $('#points_required').val(points_required);
+            $('#reward_point').val(points_required);
 
             $('#ajax-product-modal').modal('show');
         });
 
         $('#qty').on('input', function() {
             var qty = parseInt($(this).val());
-            var pointsRequired = parseInt($('#points_required').val());
+            var pointsRequired = parseInt($('#reward_point').val());
             var availPoints = parseInt($('#avail_points').val());
             
             var totalPointsRequired = pointsRequired * qty;
+            var pointsRemaining = availPoints - totalPointsRequired;
+            $('#points_remaining').val(pointsRemaining)
+
+            if(!isNaN(qty)){
+                $('#points_required').val(totalPointsRequired);
+            }else{
+                $('#points_required').val(pointsRequired);
+            }
 
             if (totalPointsRequired > availPoints) {
                 $('#points-warning').show();
@@ -149,6 +160,7 @@
             }
         });
     });
+
 </script>
 
 @endsection

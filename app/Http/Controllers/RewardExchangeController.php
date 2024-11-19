@@ -50,12 +50,28 @@ class RewardExchangeController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'reward_id' => 'required|exists:rewards,id',
+            'qty' => 'required|integer|min:1',
+            'points_required' => 'required|integer|min:1',
+        ]);
         RewardExchange::create([
             'user_id' => auth()->id(),
             'reward_id'=> $request->input('reward_id'),
             'qty'=> $request->input('qty'),
             'status'=> "Pending",
         ]);
+
+        // $userStats = UserStats::where('user_id', auth()->id())->first();
+        $userStats = UserStats :: find(auth()->id());
+        if ($userStats) {
+            $userStats->update([
+                'outstanding_points' => (int)$request->input('points_remaining'),
+            ]);
+        }else {
+        return redirect()->back()->withErrors('User stats not found.');
+        }
+        
         return redirect()->route('reward_exchange.index');
     }
 
@@ -107,6 +123,22 @@ class RewardExchangeController extends Controller
      */
     public function destroy(RewardExchange $rewardExchange)
     {
-        //
+        $reqPts = $rewardExchange->reward->points_required;
+        $qtyReq = $rewardExchange->qty;
+        $totalPts = $reqPts * $qtyReq;
+
+        $userStats = UserStats :: find(auth()->id());
+        if ($userStats) {
+            $updatedPts = $userStats->outstanding_points + $totalPts;
+            $userStats->update([
+                'outstanding_points' => $updatedPts,
+            ]);
+        }else {
+        return redirect()->back()->withErrors('User stats not found.');
+        }
+
+
+        $rewardExchange->delete();
+        return redirect()->route('reward_exchange.index')->with('success', 'Request Cancelled successfully!');
     }
 }

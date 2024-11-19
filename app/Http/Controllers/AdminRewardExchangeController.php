@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\RewardExchange;
+use App\Models\UserStats;
 use Illuminate\Http\Request;
 
 class AdminRewardExchangeController extends Controller
@@ -37,6 +38,21 @@ class AdminRewardExchangeController extends Controller
         $rewardExchange->update([
             'status' => "Rejected"
         ]);
+
+        $reqPts = $rewardExchange->reward->points_required;
+        $qtyReq = $rewardExchange->qty;
+        $totalPts = $reqPts * $qtyReq;
+
+        $userStats = UserStats :: find($rewardExchange->user_id);
+        if ($userStats) {
+            $updatedPts = $userStats->outstanding_points + $totalPts;
+            $userStats->update([
+                'outstanding_points' => $updatedPts,
+            ]);
+        }else {
+        return redirect()->back()->withErrors('User stats not found.');
+        }
+
         return redirect()->route('admin_reward_exchange.index');
     }
     public function SuccessfulRedeems(){

@@ -16,6 +16,12 @@
     <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
         @csrf
         @method('patch')
+        
+        
+        <div>
+            <x-input-label for="account_id" :value="__('Account ID')" />
+            <x-text-input id="account_id" name="account_id" type="text" class="mt-1 block w-full" :value="old('account_id', $user->account_id)" disabled/>
+        </div>
 
         <div>
             <x-input-label for="name" :value="__('Name')" />

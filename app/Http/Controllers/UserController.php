@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\UserStats;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -51,9 +52,17 @@ class UserController extends Controller
     $user->year_level = $request->input('year_level');
     $user->id_number = $request->input('id_number');
     $user->email = $request->input('email');
-    $user->password = bcrypt($request->input('password')); // Encrypting password
+    $user->password = bcrypt($request->input('password')); 
     $user->role = $request->input('role');
     $user->save();
+    
+
+    UserStats::create([
+        'user_id' => $user->id,
+        'outstanding_points'=> 0,
+        'total_accu_points'=> 0,
+        'total_bottles_thrown' => 0
+    ]);
 
     return to_route('user.index')->with('message', 'User was Successfully Added');
 }

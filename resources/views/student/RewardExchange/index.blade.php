@@ -16,8 +16,8 @@
                     <tr>
                         <th>Reward Description</th>
                         <th>Exchanged Quantity</th>
-                        {{-- <th>Points Required</th>
-                        <th>Request Date</th> --}}
+                        <th>Pts per Qty</th>
+                        {{-- <th>Request Date</th> --}}
                         <th>Status</th>
                         <th>Remarks</th>
                         <th>Action</th>
@@ -27,7 +27,7 @@
                     <tr>
                         <th>Reward Description</th>
                         <th>Exchanged Quantity</th>
-                        {{-- <th>Points Required</th> --}}
+                        <th>Pts per Qty</th>
                         {{-- <th>Request Date</th> --}}
                         <th>Status</th>
                         <th>Remarks</th>
@@ -39,12 +39,12 @@
                     <tr>
                         <td>{{ $rewardExchange->reward->description }}</td>
                         <td>{{ $rewardExchange->qty }}</td>
-                        {{-- <td>{{ $rewardExchange->reward->points_required }}</td> --}}
+                        <td>{{ $rewardExchange->reward->points_required }}</td>
                         {{-- <td>{{ $rewardExchange->created_at->format('Y-m-d h:i A') }}</td> --}}
                         <td>{{ $rewardExchange->status }}</td>
                         <td>
                             @if($rewardExchange->status === "Approved")
-                            Your request has been approved. Please claim it at the IT bldg lobby this Friday at 5:00PM.
+                            Your request has been approved. Please claim it at <br>the IT bldg lobby this Friday at 5:00PM.
                             @else
                             Your request is still pending approval. Please wait for confirmation.
                             @endif
@@ -54,7 +54,7 @@
                             <button type="#" class="btn btn-secondary" disabled>Not Applicable</button>
                             @else
                             {{-- <a href="javascript:void(0)" class="btn btn-primary edit-reward_exchange" data-id="{{ $rewardExchange->id }}">Edit</a> --}}
-                            <form action="{{ route('reward_exchange.destroy', $rewardExchange->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Are you sure you want to delete this Exchange Request?');">
+                            <form action="{{ route('reward_exchange.destroy', $rewardExchange->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Are you sure you want to Cancel this Exchange Request?');">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger">Cancel Request</button>
